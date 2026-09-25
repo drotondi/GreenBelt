@@ -30,6 +30,23 @@
       },
     },
     {
+      id: 'littles-law',
+      path: 'simulations/littles-law/index.html',
+      thumbnail: 'simulations/littles-law/thumbnail.svg',
+      status: 'live',
+      tags: ['flow', 'wip', 'lead-time'],
+      title: {
+        en: "Little's Law: 3-process line",
+        es: 'Ley de Little: línea de 3 procesos',
+        pt: 'Lei de Little: linha com 3 processos',
+      },
+      description: {
+        en: 'Run a live 3-step line and see why WIP = Throughput × Lead time: to cut lead time, cut WIP.',
+        es: 'Opera una línea de 3 pasos en vivo y descubre por qué WIP = Throughput × Lead time: para bajar el lead time, baja el WIP.',
+        pt: 'Opere uma linha de 3 etapas ao vivo e veja por que WIP = Throughput × Lead time: para reduzir o lead time, reduza o WIP.',
+      },
+    },
+    {
       id: 'template',
       path: 'simulations/_template/index.html',
       thumbnail: 'simulations/_template/thumbnail.svg',

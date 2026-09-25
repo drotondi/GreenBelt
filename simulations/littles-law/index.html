@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="ll.pageTitle"></title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="../../shared/base.css">
+  <link rel="stylesheet" href="littles-law.css">
+  <!-- Classic scripts (not modules) so the page also works opened from disk. Order matters. -->
+  <script defer src="../../shared/config.js"></script>
+  <script defer src="../../shared/i18n.js"></script>
+  <script defer src="../../shared/icons.js"></script>
+  <script defer src="../../shared/motion.js"></script>
+  <script defer src="../../shared/header.js"></script>
+  <script defer src="i18n.js"></script>
+  <script defer src="engine.js"></script>
+  <script defer src="littles-law.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="a11y.skip"></a>
+  <header id="site-header"></header>
+
+  <main id="main" class="page container ll">
+    <div class="page-intro">
+      <p class="eyebrow" data-i18n="ll.eyebrow"></p>
+      <h1 data-i18n="ll.title"></h1>
+      <p class="lead" data-i18n="ll.lead"></p>
+    </div>
+
+    <!-- 1. Equation bar -->
+    <section class="card eq-card" data-i18n-attr="aria-label:ll.eq.label">
+      <div class="eq">
+        <div class="eq__term">
+          <span class="eq__name" data-i18n="ll.eq.wip"></span>
+          <span class="eq__value" id="eq-wip"></span>
+          <span class="eq__gloss" data-i18n="ll.eq.wipGloss"></span>
+          <span class="eq__sub" id="eq-wip-sub"></span>
+        </div>
+        <span class="eq__op" aria-hidden="true">=</span>
+        <div class="eq__term">
+          <span class="eq__name" data-i18n="ll.eq.th"></span>
+          <span class="eq__value" id="eq-th"></span>
+          <span class="eq__gloss" data-i18n="ll.eq.thGloss"></span>
+          <span class="eq__sub" id="eq-th-sub"></span>
+        </div>
+        <span class="eq__op" aria-hidden="true">×</span>
+        <div class="eq__term">
+          <span class="eq__name" data-i18n="ll.eq.lt"></span>
+          <span class="eq__value" id="eq-lt"></span>
+          <span class="eq__gloss" data-i18n="ll.eq.ltGloss"></span>
+          <span class="eq__sub" id="eq-lt-sub"></span>
+        </div>
+      </div>
+      <div class="eq__foot">
+        <p class="status-chip" id="eq-chip" data-state="stabilizing"><span class="status-chip__icon" id="eq-chip-icon"></span><span id="eq-chip-text"></span></p>
+        <p class="eq__product" id="eq-product"></p>
+      </div>
+      <p class="eq__note" data-i18n="ll.warmupNote"></p>
+      <p class="sr-only" id="live-region" aria-live="polite" aria-atomic="true"></p>
+    </section>
+
+    <!-- 2. Flow line -->
+    <section class="card flow-card" data-i18n-attr="aria-label:ll.flow.label">
+      <div class="flow" id="flow">
+        <canvas class="flow__canvas" id="flow-canvas" role="img"></canvas>
+
+        <div class="node node--source">
+          <div class="node__head"><h2 class="node__title" data-i18n="ll.node.arrivals"></h2></div>
+          <div class="node__visual" data-anchor="source"></div>
+          <div class="node__controls">
+            <div class="field">
+              <div class="field__head">
+                <label class="field__label" for="in-lambda" data-i18n="ll.lambda"></label>
+                <output class="field__value" for="in-lambda" id="out-lambda"></output>
+              </div>
+              <input type="range" id="in-lambda" min="0.2" max="5" step="0.1" value="1.5">
+              <p class="node__hint" id="lambda-interval"></p>
+            </div>
+            <p class="node__backlog" id="backlog-text" hidden></p>
+          </div>
+        </div>
+
+        <div class="node node--process" data-index="0">
+          <div class="node__head"><h2 class="node__title" data-i18n-process="1"></h2><span class="bottleneck-badge" hidden><span data-i18n="ll.node.bottleneck"></span></span></div>
+          <div class="node__visual" data-anchor="p0"></div>
+          <div class="node__controls"></div>
+        </div>
+        <div class="node node--process" data-index="1">
+          <div class="node__head"><h2 class="node__title" data-i18n-process="2"></h2><span class="bottleneck-badge" hidden><span data-i18n="ll.node.bottleneck"></span></span></div>
+          <div class="node__visual" data-anchor="p1"></div>
+          <div class="node__controls"></div>
+        </div>
+        <div class="node node--process" data-index="2">
+          <div class="node__head"><h2 class="node__title" data-i18n-process="3"></h2><span class="bottleneck-badge" hidden><span data-i18n="ll.node.bottleneck"></span></span></div>
+          <div class="node__visual" data-anchor="p2"></div>
+          <div class="node__controls"></div>
+        </div>
+
+        <div class="node node--sink">
+          <div class="node__head"><h2 class="node__title" data-i18n="ll.node.done"></h2></div>
+          <div class="node__visual node__visual--sink" data-anchor="sink" tabindex="0" data-i18n-attr="aria-label:ll.node.sinkHint"></div>
+          <div class="node__controls">
+            <p class="node__count" id="done-count"></p>
+            <p class="node__hint" data-i18n="ll.node.sinkHint"></p>
+          </div>
+          <div class="sink-tip" id="sink-tip" role="status" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Controls -->
+    <section class="card control-panel ll-controls" data-i18n-attr="aria-label:ll.controlsLabel">
+      <div class="ll-controls__run">
+        <button type="button" class="btn btn--primary" id="btn-play"></button>
+        <button type="button" class="btn" id="btn-reset"></button>
+        <button type="button" class="btn" id="btn-seed"></button>
+        <p class="ll-controls__meta"><span id="seed-label"></span><span aria-hidden="true"> · </span><span id="clock-label"></span></p>
+      </div>
+      <div class="ll-controls__grid">
+        <div class="field">
+          <div class="field__head">
+            <label class="field__label" for="in-speed" data-i18n="ll.speed"></label>
+            <output class="field__value" for="in-speed" id="out-speed"></output>
+          </div>
+          <input type="range" id="in-speed" min="0" max="5" step="1" value="2">
+        </div>
+        <div class="field">
+          <div class="field__head">
+            <label class="field__label" for="in-cv" data-i18n="ll.cv"></label>
+            <output class="field__value" for="in-cv" id="out-cv"></output>
+          </div>
+          <input type="range" id="in-cv" min="0" max="1" step="0.05" value="0.2">
+          <p class="node__hint" data-i18n="ll.cvHint"></p>
+        </div>
+        <div class="field">
+          <p class="field__label" id="policy-label" data-i18n="ll.policy"></p>
+          <div class="segmented" role="group" aria-labelledby="policy-label">
+            <button type="button" class="segmented__btn" data-policy="push" data-i18n="ll.push"></button>
+            <button type="button" class="segmented__btn" data-policy="pull" data-i18n="ll.pull"></button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field__head">
+            <label class="field__label" for="in-cap" data-i18n="ll.wipCap"></label>
+            <output class="field__value" for="in-cap" id="out-cap"></output>
+          </div>
+          <input type="range" id="in-cap" min="1" max="50" step="1" value="8">
+        </div>
+      </div>
+      <p class="hint" id="shortcuts"></p>
+    </section>
+
+    <!-- 4. Charts -->
+    <section class="card charts-card" aria-labelledby="charts-title">
+      <div class="charts-card__head">
+        <div>
+          <h2 class="charts-card__title" id="charts-title" data-i18n="ll.charts.title"></h2>
+          <p class="node__hint" data-i18n="ll.charts.range"></p>
+        </div>
+        <ul class="legend">
+          <li><span class="legend__swatch legend__swatch--series" aria-hidden="true"></span><span data-i18n="ll.charts.current"></span></li>
+          <li><span class="legend__swatch legend__swatch--avg" aria-hidden="true"></span><span data-i18n="ll.charts.avg"></span></li>
+          <li><span class="legend__swatch legend__swatch--warmup" aria-hidden="true"></span><span data-i18n="ll.charts.warmup"></span></li>
+        </ul>
+      </div>
+      <div class="chart">
+        <h3 class="chart__title" data-i18n="ll.charts.wip"></h3>
+        <canvas class="chart__canvas" id="chart-wip" role="img"></canvas>
+      </div>
+      <div class="chart">
+        <h3 class="chart__title" data-i18n="ll.charts.lt"></h3>
+        <canvas class="chart__canvas" id="chart-lt" role="img"></canvas>
+      </div>
+    </section>
+
+    <!-- 5. Scenarios -->
+    <section class="card scen-card" aria-labelledby="scen-title">
+      <h2 class="charts-card__title" id="scen-title" data-i18n="ll.scen.title"></h2>
+      <p class="node__hint" data-i18n="ll.scen.hint"></p>
+      <div class="scen-list" id="scen-list" role="group" aria-labelledby="scen-title"></div>
+      <div class="scen-observe" id="scen-observe">
+        <p class="eyebrow" data-i18n="ll.scen.observe"></p>
+        <p id="scen-observe-text"></p>
+      </div>
+    </section>
+
+    <!-- 6. Learn -->
+    <details class="card disclosure">
+      <summary><span data-i18n="ll.learn.title"></span><span id="learn-icon"></span></summary>
+      <div class="disclosure__body">
+        <p data-i18n="ll.learn.p1"></p>
+        <p data-i18n="ll.learn.p2"></p>
+        <p data-i18n="ll.learn.p3"></p>
+      </div>
+    </details>
+  </main>
+
+  <footer id="site-footer"></footer>
+</body>
+</html>

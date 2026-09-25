@@ -15,6 +15,7 @@
   const { initI18n, onLangChange, t, formatNumber } = LSS.i18n;
   const { renderHeader, renderFooter } = LSS.header;
   const { icon } = LSS.icons;
+  const { ease } = LSS.motion;
 
   /* ---------- Constants ---------- */
   const SPEEDS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
@@ -29,26 +30,6 @@
   const MAX_DPR = 2;
   const MAX_TRAIL_BALLS = 800; // trails add nothing visible beyond this density; keeps 60 fps
 
-  /* ---------- Easing: cubic-bezier(.2, 0, .2, 1) as a lookup table ---------- */
-  function makeCubicBezier(x1, y1, x2, y2, n = 256) {
-    const bx = (s) => 3 * (1 - s) * (1 - s) * s * x1 + 3 * (1 - s) * s * s * x2 + s * s * s;
-    const by = (s) => 3 * (1 - s) * (1 - s) * s * y1 + 3 * (1 - s) * s * s * y2 + s * s * s;
-    const table = new Float32Array(n + 1);
-    let s = 0;
-    for (let j = 0; j <= n; j++) {
-      const x = j / n;
-      while (s < 1 && bx(s) < x) s += 1 / 4096;
-      table[j] = by(Math.min(s, 1));
-    }
-    return (x) => {
-      if (x <= 0) return 0;
-      if (x >= 1) return 1;
-      const f = x * n;
-      const i = f | 0;
-      return table[i] + (table[i + 1] - table[i]) * (f - i);
-    };
-  }
-  const ease = makeCubicBezier(0.2, 0, 0.2, 1);
 
   /* ---------- DOM ---------- */
   const $ = (id) => document.getElementById(id);

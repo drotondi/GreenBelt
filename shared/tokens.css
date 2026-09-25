@@ -1,0 +1,121 @@
+/*
+ * Amcor design tokens — single source of truth.
+ * Every color, radius, shadow and motion value used by the hub and its
+ * simulations comes from here. Canvas code reads these via getComputedStyle.
+ */
+:root {
+  /* Brand */
+  --amcor-navy: #00395A;
+  --amcor-cyan: #00A1DE;
+  --amcor-teal: #1BCDAC;
+  --amcor-green: #00A551;
+  --amcor-gradient-stop: #24BBEE;
+
+  /* Navy ramp */
+  --navy-900: #001d2f;
+  --navy-800: #002d47;
+  --navy-700: #00395A;
+  --navy-600: #0a4d72;
+  --navy-500: #1a6691;
+  --navy-200: #b9d3e2;
+  --navy-100: #dcebf3;
+  --navy-050: #eef5f9;
+
+  /* Cyan ramp */
+  --cyan-700: #0079a8;
+  --cyan-600: #008cc4;
+  --cyan-500: #00A1DE;
+  --cyan-300: #6cccef;
+  --cyan-100: #cdeefb;
+  --cyan-050: #e8f7fd;
+
+  /* Blue-tinted neutrals */
+  --neutral-0: #ffffff;
+  --neutral-25: #f6f9fc;
+  --neutral-50: #eef4fa;
+  --neutral-100: #e0eaf3;
+  --neutral-200: #c7d7e6;
+  --neutral-300: #a6bdd2;
+  --neutral-400: #7892ab;
+  --neutral-500: #566f88;
+  --neutral-600: #3d5267;
+  --neutral-700: #2a3d4f;
+
+  /* Signature gradient — accents only, never behind body text */
+  --gradient-signature: linear-gradient(90deg, #1BCDAC 0%, #24BBEE 50%, #00A1DE 100%);
+
+  /* Semantic roles */
+  --color-bg: var(--neutral-50);
+  --color-surface: var(--neutral-0);
+  --color-surface-muted: var(--neutral-25);
+  --color-text: var(--amcor-navy);
+  --color-text-muted: var(--neutral-600);   /* 7.9:1 on white */
+  --color-text-subtle: var(--neutral-500);  /* 5.2:1 on white, 4.7:1 on bg */
+  --color-border: var(--neutral-100);
+  --color-border-strong: var(--neutral-200);
+  --color-interactive: var(--amcor-cyan);
+  --color-interactive-strong: var(--cyan-600); /* non-text UI, ≥3:1 on white */
+  --color-link: var(--cyan-700);               /* text, 4.9:1 on white */
+  --color-focus: var(--amcor-cyan);
+  --color-primary: var(--amcor-navy);
+  --color-primary-hover: var(--navy-600);
+  --color-on-primary: var(--neutral-0);
+
+  /* Simulation palette */
+  --sim-peg: var(--navy-200);
+  --sim-ball: var(--amcor-cyan);
+  --sim-ball-highlight: var(--amcor-teal);
+  --sim-ball-edge: var(--cyan-600);
+  --sim-curve: var(--amcor-navy);
+  --sim-grid: var(--neutral-100);
+  --sim-divider: var(--neutral-200);
+  --sim-floor: var(--navy-200);
+  --sim-label: var(--neutral-500);
+  --sim-gradient-0: #1BCDAC;
+  --sim-gradient-50: #24BBEE;
+  --sim-gradient-100: #00A1DE;
+
+  /* Typography — one typeface */
+  --font-family-fallback: Arial, Helvetica, sans-serif;
+  --font-family-brand: "AmcorPro", Arial, Helvetica, sans-serif;
+  --font-family: var(--font-family-fallback);
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+  --letter-spacing-eyebrow: 0.08em;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Shape */
+  --radius-control: 6px;
+  --radius-card: 8px;
+  --radius-chip: 4px;
+
+  /* Elevation */
+  --shadow-card: 0 8px 24px rgba(0, 57, 90, 0.08);
+  --shadow-card-hover: 0 12px 28px rgba(0, 57, 90, 0.13);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(.2, 0, .2, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+
+  /* Layout */
+  --container-max: 1200px;
+  --header-height: 64px;
+  --accent-bar-height: 3px;
+}

@@ -1,0 +1,68 @@
+<!doctype html>
+<!--
+  Simulation template. To start a new simulation:
+  1. Copy this folder to simulations/<your-id>/
+  2. Rename the "tpl." string prefix in i18n.js and here to your own prefix.
+  3. Implement sim.js; add one entry to simulations/registry.js with status "live".
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="tpl.pageTitle"></title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="../../shared/base.css">
+  <link rel="stylesheet" href="sim.css">
+  <script type="module" src="sim.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="a11y.skip"></a>
+  <header id="site-header"></header>
+
+  <main id="main" class="page container">
+    <div class="page-intro">
+      <p class="eyebrow" data-i18n="tpl.eyebrow"></p>
+      <h1 data-i18n="tpl.title"></h1>
+      <p class="lead" data-i18n="tpl.lead"></p>
+    </div>
+
+    <div class="sim-layout">
+      <section class="sim-stage card">
+        <div class="stage" id="stage"><canvas id="sim-canvas" role="img" data-i18n-attr="aria-label:tpl.canvasLabel"></canvas></div>
+        <dl class="stats">
+          <div class="stat"><dt data-i18n="tpl.stat.count"></dt><dd id="stat-count"></dd></div>
+        </dl>
+        <p class="sr-only" id="live-region" aria-live="polite" aria-atomic="true"></p>
+      </section>
+
+      <aside class="sim-controls card control-panel" data-i18n-attr="aria-label:tpl.controlsLabel">
+        <div class="control-group">
+          <h2 class="eyebrow" data-i18n="tpl.group.run"></h2>
+          <div class="btn-row">
+            <button type="button" class="btn btn--primary" id="btn-play"></button>
+            <button type="button" class="btn" id="btn-reset"></button>
+          </div>
+        </div>
+        <div class="control-group">
+          <h2 class="eyebrow" data-i18n="tpl.group.params"></h2>
+          <div class="field">
+            <div class="field__head">
+              <label class="field__label" for="in-rate" data-i18n="tpl.rate"></label>
+              <output class="field__value" for="in-rate" id="out-rate"></output>
+            </div>
+            <input type="range" id="in-rate" min="1" max="60" step="1" value="10">
+          </div>
+        </div>
+      </aside>
+
+      <details class="sim-about card disclosure">
+        <summary><span data-i18n="tpl.about.title"></span><span id="about-icon"></span></summary>
+        <div class="disclosure__body"><p data-i18n="tpl.about.p1"></p></div>
+      </details>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+</body>
+</html>

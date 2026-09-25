@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="pc.pageTitle"></title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="../../shared/base.css">
+  <link rel="stylesheet" href="capability.css">
+  <!-- Classic scripts (not modules) so the page also works opened from disk. Order matters. -->
+  <script defer src="../../shared/config.js"></script>
+  <script defer src="../../shared/i18n.js"></script>
+  <script defer src="../../shared/icons.js"></script>
+  <script defer src="../../shared/motion.js"></script>
+  <script defer src="../../shared/header.js"></script>
+  <script defer src="../../shared/sim/random.js"></script>
+  <script defer src="../../shared/sim/chart.js"></script>
+  <script defer src="i18n.js"></script>
+  <script defer src="spc.js"></script>
+  <script defer src="engine.js"></script>
+  <script defer src="challenge.js"></script>
+  <script defer src="capability.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="a11y.skip"></a>
+  <header id="site-header"></header>
+
+  <main id="main" class="page container pc">
+    <div class="pc-intro">
+      <div class="page-intro">
+        <p class="eyebrow" data-i18n="pc.eyebrow"></p>
+        <h1 data-i18n="pc.title"></h1>
+        <p class="lead" data-i18n="pc.lead"></p>
+      </div>
+      <div class="segmented pc-modes" role="group" data-i18n-attr="aria-label:pc.mode.label">
+        <button type="button" class="segmented__btn" data-mode="explore" data-i18n="pc.mode.explore"></button>
+        <button type="button" class="segmented__btn" data-mode="process" data-i18n="pc.mode.process"></button>
+        <button type="button" class="segmented__btn" data-mode="challenge" data-i18n="pc.mode.challenge"></button>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <section class="card kpi-strip" id="kpis" data-i18n-attr="aria-label:pc.kpi.label">
+      <dl class="kpi-strip__list" id="kpi-list"></dl>
+      <div class="kpi-strip__chips">
+        <p class="status-chip" id="state-chip"><span class="status-chip__icon" id="state-icon"></span><span id="state-text"></span></p>
+        <p class="status-chip" id="band-chip"><span class="status-chip__icon" id="band-icon"></span><span id="band-text"></span></p>
+      </div>
+      <p class="kpi-strip__note" id="kpi-note"></p>
+      <p class="sr-only" id="live-region" aria-live="polite" aria-atomic="true"></p>
+    </section>
+
+    <!-- View A: distribution -->
+    <section class="card view" aria-labelledby="dist-title">
+      <div class="view__head">
+        <div>
+          <h2 class="view__title" id="dist-title" data-i18n="pc.dist.title"></h2>
+          <p class="view__hint" id="dist-hint"></p>
+        </div>
+        <div class="field view__select" id="hist-field" hidden>
+          <label class="field__label" for="hist-window" data-i18n="pc.dist.window"></label>
+          <select id="hist-window" class="pc-select">
+            <option value="100" data-i18n="pc.dist.last100"></option>
+            <option value="500" data-i18n="pc.dist.last500"></option>
+            <option value="all" data-i18n="pc.dist.all"></option>
+          </select>
+        </div>
+      </div>
+      <div class="dist" id="dist">
+        <canvas class="dist__canvas" id="dist-canvas" role="img"></canvas>
+        <button type="button" class="handle" id="handle-lsl" role="slider" data-key="lsl"></button>
+        <button type="button" class="handle handle--mu" id="handle-mu" role="slider" data-key="mu"></button>
+        <button type="button" class="handle" id="handle-usl" role="slider" data-key="usl"></button>
+      </div>
+      <ul class="legend" id="dist-legend"></ul>
+    </section>
+
+    <!-- Explore placeholder for views B and C -->
+    <section class="card view view--placeholder" id="explore-note">
+      <p data-i18n="pc.explore.note"></p>
+    </section>
+
+    <!-- View B: X̄-R chart -->
+    <section class="card view" id="view-spc" aria-labelledby="spc-title">
+      <div class="view__head">
+        <div>
+          <h2 class="view__title" id="spc-title" data-i18n="pc.spc.title"></h2>
+          <p class="view__hint" id="spc-hint"></p>
+        </div>
+        <div class="spc-tools">
+          <label class="switch"><span data-i18n="pc.spc.showSpecs"></span><input type="checkbox" role="switch" id="show-specs"></label>
+          <button type="button" class="btn" id="btn-recalc"></button>
+        </div>
+      </div>
+      <div class="spc-rules" role="group" aria-labelledby="rules-label">
+        <span class="field__label" id="rules-label" data-i18n="pc.spc.rules"></span>
+        <label class="rule-toggle"><input type="checkbox" data-rule="1" checked><span data-i18n="pc.rule.1short"></span></label>
+        <label class="rule-toggle"><input type="checkbox" data-rule="2" checked><span data-i18n="pc.rule.2short"></span></label>
+        <label class="rule-toggle"><input type="checkbox" data-rule="3" checked><span data-i18n="pc.rule.3short"></span></label>
+        <label class="rule-toggle"><input type="checkbox" data-rule="4" checked><span data-i18n="pc.rule.4short"></span></label>
+      </div>
+      <div class="chart-box">
+        <h3 class="chart-box__title" data-i18n="pc.spc.xbar"></h3>
+        <canvas class="spc-canvas" id="xbar-canvas" role="img"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3 class="chart-box__title" data-i18n="pc.spc.r"></h3>
+        <canvas class="spc-canvas spc-canvas--r" id="r-canvas" role="img"></canvas>
+      </div>
+      <p class="spec-note" id="spec-note" data-i18n="pc.spc.specNote" hidden></p>
+      <div class="signals">
+        <p class="field__label" data-i18n="pc.spc.signals"></p>
+        <ul class="signals__list" id="signals"></ul>
+      </div>
+      <div class="pc-tip" id="pc-tip" role="status" hidden></div>
+    </section>
+
+    <!-- View C: capability over time -->
+    <section class="card view" id="view-rolling" aria-labelledby="roll-title">
+      <div class="view__head">
+        <div>
+          <h2 class="view__title" id="roll-title" data-i18n="pc.roll.title"></h2>
+          <p class="view__hint" id="roll-hint"></p>
+        </div>
+      </div>
+      <canvas class="roll-canvas" id="roll-canvas" role="img"></canvas>
+    </section>
+
+    <!-- Controls -->
+    <section class="card pc-panel" id="params-panel" data-i18n-attr="aria-label:pc.params.label">
+      <div class="pc-run" id="run-row">
+        <button type="button" class="btn btn--primary" id="btn-play"></button>
+        <button type="button" class="btn" id="btn-step"></button>
+        <button type="button" class="btn" id="btn-reset"></button>
+        <button type="button" class="btn" id="btn-seed"></button>
+        <p class="pc-meta" id="seed-label"></p>
+      </div>
+      <div class="pc-grid" id="param-grid"></div>
+      <div class="pc-events" id="events-row">
+        <p class="eyebrow" id="events-label" data-i18n="pc.events.title"></p>
+        <div class="pc-events__btns" role="group" aria-labelledby="events-label">
+          <button type="button" class="btn" data-event="shift" data-i18n="pc.events.shift"></button>
+          <button type="button" class="btn" data-event="drift" data-i18n="pc.events.drift"></button>
+          <button type="button" class="btn" data-event="variation" data-i18n="pc.events.variation"></button>
+          <button type="button" class="btn" data-event="outliers" data-i18n="pc.events.outliers"></button>
+          <button type="button" class="btn" data-event="baseline" data-i18n="pc.events.baseline"></button>
+        </div>
+        <label class="switch pc-predict-toggle"><span data-i18n="pc.predict.toggle"></span><input type="checkbox" role="switch" id="predict-on" checked></label>
+        <div class="predict" id="predict" hidden></div>
+      </div>
+      <div class="pc-presets" id="presets-row">
+        <h2 class="section-title" id="presets-title" data-i18n="pc.presets.title"></h2>
+        <div class="preset-list" id="preset-list" role="group" aria-labelledby="presets-title"></div>
+        <div class="preset-observe"><p class="eyebrow" data-i18n="pc.presets.observe"></p><p id="preset-text"></p></div>
+      </div>
+      <p class="hint" id="shortcuts"></p>
+    </section>
+
+    <section class="card pc-panel" id="challenge-panel" data-i18n-attr="aria-label:pc.challenge.label" hidden></section>
+
+    <details class="card disclosure">
+      <summary><span data-i18n="pc.learn.title"></span><span id="learn-icon"></span></summary>
+      <div class="disclosure__body">
+        <p data-i18n="pc.learn.p1"></p>
+        <p data-i18n="pc.learn.p2"></p>
+        <p data-i18n="pc.learn.p3"></p>
+        <p data-i18n="pc.learn.p4"></p>
+        <p><a class="pc-link" data-keep-lang href="../galton-board/index.html" data-i18n="pc.learn.link"></a></p>
+      </div>
+    </details>
+  </main>
+
+  <footer id="site-footer"></footer>
+</body>
+</html>

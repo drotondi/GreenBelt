@@ -76,6 +76,23 @@
         pt: 'Estrutura base para criar novas simulações.',
       },
     },
+    {
+      id: 'process-capability',
+      path: 'simulations/process-capability/index.html',
+      thumbnail: 'simulations/process-capability/thumbnail.svg',
+      status: 'live',
+      tags: ['capability', 'cpk', 'spc', 'control-chart'],
+      title: {
+        en: 'Process capability (Cp/Cpk)',
+        es: 'Capacidad de proceso (Cp/Cpk)',
+        pt: 'Capacidade do processo (Cp/Cpk)',
+      },
+      description: {
+        en: 'Move the mean, spread and spec limits to see Cp, Cpk and defects change, then watch capability decay on a live X̄-R chart.',
+        es: 'Mueve la media, la dispersión y los límites de especificación para ver cambiar Cp, Cpk y los defectos, y observa cómo cae la capacidad en una carta X̄-R en vivo.',
+        pt: 'Mova a média, a dispersão e os limites de especificação para ver Cp, Cpk e defeitos mudarem, e veja a capacidade cair em uma carta X̄-R ao vivo.',
+      },
+    },
   ];
 
   const liveSimulations = () => SIMULATIONS.filter((s) => s.status === 'live');

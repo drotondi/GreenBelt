@@ -44,6 +44,10 @@
       'tags.kanban': 'Kanban',
       'tags.planning': 'Planning',
       'tags.inventory': 'Inventory',
+      'tags.capability': 'Capability',
+      'tags.cpk': 'Cpk',
+      'tags.spc': 'SPC',
+      'tags.control-chart': 'Control chart',
     },
     es: {
       'hub.title': 'Simulaciones de Lean Six Sigma',
@@ -70,6 +74,10 @@
       'tags.kanban': 'Kanban',
       'tags.planning': 'Planificación',
       'tags.inventory': 'Inventario',
+      'tags.capability': 'Capacidad',
+      'tags.cpk': 'Cpk',
+      'tags.spc': 'CEP',
+      'tags.control-chart': 'Carta de control',
     },
     pt: {
       'hub.title': 'Simulações de Lean Six Sigma',
@@ -96,6 +104,10 @@
       'tags.kanban': 'Kanban',
       'tags.planning': 'Planejamento',
       'tags.inventory': 'Estoque',
+      'tags.capability': 'Capacidade',
+      'tags.cpk': 'Cpk',
+      'tags.spc': 'CEP',
+      'tags.control-chart': 'Carta de controle',
     },
   };
 

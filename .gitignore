@@ -1,0 +1,9 @@
+# Amcor brand assets — never commit (see shared/config.js → USE_BRAND_ASSETS)
+assets/fonts/
+assets/logo-*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

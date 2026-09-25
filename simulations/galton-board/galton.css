@@ -1,0 +1,15 @@
+/* Galton Board — page-specific styles. Colors come from shared/tokens.css. */
+
+.board-card { overflow: hidden; }
+
+.board {
+  position: relative;
+  width: 100%;
+  height: 420px; /* replaced in JS from the board width */
+  background: var(--color-surface);
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+.board.is-fading { opacity: 0; }
+.board canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+#btn-play .icon, #btn-drop1 .icon, #btn-drop100 .icon, #btn-reset .icon { width: 16px; height: 16px; }

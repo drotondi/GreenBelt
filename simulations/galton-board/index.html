@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="galton.pageTitle"></title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="../../shared/base.css">
+  <link rel="stylesheet" href="galton.css">
+  <script type="module" src="galton.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="a11y.skip"></a>
+  <header id="site-header"></header>
+
+  <main id="main" class="page container">
+    <div class="page-intro">
+      <p class="eyebrow" data-i18n="galton.eyebrow"></p>
+      <h1 data-i18n="galton.title"></h1>
+      <p class="lead" data-i18n="galton.lead"></p>
+    </div>
+
+    <div class="sim-layout">
+      <section class="sim-stage card board-card">
+        <div class="board" id="board">
+          <canvas id="galton-canvas" role="img"></canvas>
+        </div>
+        <dl class="stats" data-i18n-attr="aria-label:galton.statsLabel">
+          <div class="stat"><dt data-i18n="galton.stat.dropped"></dt><dd id="stat-dropped"></dd></div>
+          <div class="stat"><dt data-i18n="galton.stat.mean"></dt><dd id="stat-mean"></dd></div>
+          <div class="stat stat--theory"><dt data-i18n="galton.stat.tmean"></dt><dd id="stat-tmean"></dd></div>
+          <div class="stat"><dt data-i18n="galton.stat.sd"></dt><dd id="stat-sd"></dd></div>
+          <div class="stat stat--theory"><dt data-i18n="galton.stat.tsd"></dt><dd id="stat-tsd"></dd></div>
+        </dl>
+        <p class="sr-only" id="live-region" aria-live="polite" aria-atomic="true"></p>
+      </section>
+
+      <aside class="sim-controls card control-panel" data-i18n-attr="aria-label:galton.controlsLabel">
+        <div class="control-group">
+          <h2 class="eyebrow" data-i18n="galton.group.run"></h2>
+          <div class="btn-row">
+            <button type="button" class="btn btn--primary btn--span" id="btn-play"></button>
+            <button type="button" class="btn" id="btn-drop1"></button>
+            <button type="button" class="btn" id="btn-drop100"></button>
+            <button type="button" class="btn btn--span" id="btn-reset"></button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <h2 class="eyebrow" data-i18n="galton.group.params"></h2>
+          <div class="field">
+            <div class="field__head">
+              <label class="field__label" for="in-rows" data-i18n="galton.rows"></label>
+              <output class="field__value" for="in-rows" id="out-rows"></output>
+            </div>
+            <input type="range" id="in-rows" min="4" max="20" step="1" value="12">
+          </div>
+          <div class="field">
+            <div class="field__head">
+              <label class="field__label" for="in-total" data-i18n="galton.total"></label>
+              <output class="field__value" for="in-total" id="out-total"></output>
+            </div>
+            <input type="range" id="in-total" min="100" max="5000" step="100" value="1000">
+          </div>
+          <div class="field">
+            <div class="field__head">
+              <label class="field__label" for="in-speed" data-i18n="galton.speed"></label>
+              <output class="field__value" for="in-speed" id="out-speed"></output>
+            </div>
+            <input type="range" id="in-speed" min="0" max="7" step="1" value="3">
+          </div>
+          <div class="field">
+            <div class="field__head">
+              <label class="field__label" for="in-p" data-i18n="galton.p"></label>
+              <output class="field__value" for="in-p" id="out-p"></output>
+            </div>
+            <input type="range" id="in-p" min="0.1" max="0.9" step="0.05" value="0.5">
+          </div>
+        </div>
+
+        <div class="control-group">
+          <h2 class="eyebrow" data-i18n="galton.group.display"></h2>
+          <label class="switch"><span data-i18n="galton.curve"></span><input type="checkbox" role="switch" id="in-curve" checked></label>
+          <label class="switch"><span data-i18n="galton.trails"></span><input type="checkbox" role="switch" id="in-trails"></label>
+          <p class="hint" id="shortcuts"></p>
+        </div>
+      </aside>
+
+      <details class="sim-about card disclosure" open>
+        <summary><span data-i18n="galton.about.title"></span><span id="about-icon"></span></summary>
+        <div class="disclosure__body">
+          <p data-i18n="galton.about.p1"></p>
+          <p data-i18n="galton.about.p2"></p>
+        </div>
+      </details>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="pp.pageTitle"></title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="../../shared/base.css">
+  <link rel="stylesheet" href="push-pull.css">
+  <!-- Classic scripts (not modules) so the page also works opened from disk. Order matters. -->
+  <script defer src="../../shared/config.js"></script>
+  <script defer src="../../shared/i18n.js"></script>
+  <script defer src="../../shared/icons.js"></script>
+  <script defer src="../../shared/motion.js"></script>
+  <script defer src="../../shared/header.js"></script>
+  <script defer src="../../shared/sim/random.js"></script>
+  <script defer src="i18n.js"></script>
+  <script defer src="engine.js"></script>
+  <script defer src="game.js"></script>
+  <script defer src="push-pull.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="a11y.skip"></a>
+  <header id="site-header"></header>
+
+  <main id="main" class="page container pp">
+    <div class="pp-intro">
+      <div class="page-intro">
+        <p class="eyebrow" data-i18n="pp.eyebrow"></p>
+        <h1 data-i18n="pp.title"></h1>
+        <p class="lead" data-i18n="pp.lead"></p>
+      </div>
+      <div class="mode-switch" role="group" data-i18n-attr="aria-label:pp.mode.label">
+        <button type="button" class="mode-switch__btn" data-mode="explore" data-i18n="pp.mode.explore"></button>
+        <button type="button" class="mode-switch__btn" data-mode="game" data-i18n="pp.mode.game"></button>
+      </div>
+    </div>
+
+    <!-- Lanes -->
+    <section class="card lanes-card" data-i18n-attr="aria-label:pp.lanes.label">
+      <div class="lanes-card__top">
+        <p class="pp-clock" id="clock"></p>
+        <ul class="pp-legend" id="legend"></ul>
+      </div>
+      <div class="lane" id="lane-push" data-line="push"></div>
+      <div class="lane" id="lane-pull" data-line="pull"></div>
+      <p class="sr-only" id="live-region" aria-live="polite" aria-atomic="true"></p>
+    </section>
+
+    <!-- Comparison -->
+    <section class="card compare-card" aria-labelledby="compare-title">
+      <h2 class="section-title" id="compare-title" data-i18n="pp.compare.title"></h2>
+      <p class="node-hint" id="compare-note" data-i18n="pp.compare.note"></p>
+      <div class="compare-wrap"><table class="compare" id="compare"></table></div>
+    </section>
+
+    <!-- Explore mode -->
+    <section class="card pp-panel" id="explore-panel" data-i18n-attr="aria-label:pp.explore.label">
+      <div class="pp-run">
+        <button type="button" class="btn btn--primary" id="btn-play"></button>
+        <button type="button" class="btn" id="btn-reset"></button>
+        <button type="button" class="btn" id="btn-seed"></button>
+        <div class="field pp-speed">
+          <div class="field__head">
+            <label class="field__label" for="in-speed" data-i18n="pp.speed"></label>
+            <output class="field__value" for="in-speed" id="out-speed"></output>
+          </div>
+          <input type="range" id="in-speed" min="0" max="5" step="1" value="2">
+        </div>
+        <p class="pp-meta" id="seed-label"></p>
+      </div>
+
+      <div class="pp-events">
+        <p class="eyebrow" id="events-label" data-i18n="pp.events.title"></p>
+        <div class="pp-events__btns" role="group" aria-labelledby="events-label">
+          <button type="button" class="btn" data-event="spike" data-i18n="pp.events.spike"></button>
+          <button type="button" class="btn" data-event="drop" data-i18n="pp.events.drop"></button>
+          <button type="button" class="btn" data-event="mix" data-i18n="pp.events.mix"></button>
+          <button type="button" class="btn" data-event="baseline" data-i18n="pp.events.baseline"></button>
+        </div>
+      </div>
+
+      <div class="pp-params" id="params"></div>
+
+      <div class="pp-presets">
+        <h2 class="section-title" id="presets-title" data-i18n="pp.presets.title"></h2>
+        <p class="node-hint" data-i18n="pp.presets.hint"></p>
+        <div class="preset-list" id="preset-list" role="group" aria-labelledby="presets-title"></div>
+        <div class="preset-observe">
+          <p class="eyebrow" data-i18n="pp.presets.observe"></p>
+          <p id="preset-text"></p>
+        </div>
+      </div>
+      <p class="hint" id="shortcuts"></p>
+    </section>
+
+    <!-- Game mode -->
+    <section class="card pp-panel" id="game-panel" data-i18n-attr="aria-label:pp.game.label" hidden></section>
+
+    <!-- Learn -->
+    <details class="card disclosure">
+      <summary><span data-i18n="pp.learn.title"></span><span id="learn-icon"></span></summary>
+      <div class="disclosure__body">
+        <p data-i18n="pp.learn.p1"></p>
+        <p data-i18n="pp.learn.p2"></p>
+        <p data-i18n="pp.learn.p3"></p>
+        <p><a class="pp-link" data-keep-lang href="../littles-law/index.html" data-i18n="pp.learn.link"></a></p>
+      </div>
+    </details>
+  </main>
+
+  <footer id="site-footer"></footer>
+</body>
+</html>

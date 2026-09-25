@@ -6,6 +6,7 @@ A hub of small, interactive simulations that make core Lean Six Sigma concepts v
 |---|---|
 | **Galton Board** | Variation and the normal distribution |
 | **Little's Law: 3-process line** | WIP = Throughput × Lead time, bottlenecks, variability, push vs. pull (CONWIP) |
+| **Push vs. Pull: planning game** | Forecast-driven (MRP) vs. kanban release, card sizing; Explore mode and a 6-round classroom game with facilitator seed |
 
 **Live site:** https://drotondi.github.io/GreenBelt/
 
@@ -31,7 +32,7 @@ Run it from the repository root, then open http://localhost:8000/.
 
 ### Why classic scripts
 
-Browsers block ES modules on `file://`, so all JavaScript uses classic `<script defer>` tags and a single global namespace, `window.LSS` (`LSS.config`, `LSS.i18n`, `LSS.icons`, `LSS.motion`, `LSS.header`, `LSS.registry`). Script order in each page matters. Links always point to an explicit `index.html`, because folder links do not open `index.html` from disk.
+Browsers block ES modules on `file://`, so all JavaScript uses classic `<script defer>` tags and a single global namespace, `window.LSS` (`LSS.config`, `LSS.i18n`, `LSS.icons`, `LSS.motion`, `LSS.header`, `LSS.registry`, `LSS.sim`). Script order in each page matters. Links always point to an explicit `index.html`, because folder links do not open `index.html` from disk.
 
 ## Brand assets flag
 
@@ -50,10 +51,12 @@ LSS.config = { USE_BRAND_ASSETS: false, … }
 
 ```
 index.html                 Home: renders cards from simulations/registry.js
-shared/                    Design tokens, base styles, i18n, header, icons, config
+shared/                    Design tokens, base styles, i18n, header, icons, config, motion
+shared/sim/random.js       Seeded RNG and distributions shared by all simulation engines
 simulations/registry.js    List of simulations shown on Home
 simulations/galton-board/  Galton Board simulation
 simulations/littles-law/   Little's Law simulation (engine.js = pure discrete-event model)
+simulations/push-pull/     Push vs. Pull simulation (engine.js model, game.js rounds)
 simulations/_template/     Copyable skeleton (status "draft", hidden from Home)
 ```
 
@@ -61,11 +64,16 @@ All colors, radii, shadows and motion values live in `shared/tokens.css`. Status
 
 ## Tests
 
-The Little's Law engine has dependency-free unit tests (deterministic hand-calculated cases, Little's Law within 5% on random runs, M/M/1 tandem check, unstable detection, CONWIP cap):
+Simulation engines have dependency-free unit tests:
 
 ```sh
-node simulations/littles-law/engine.test.js
+node simulations/littles-law/engine.test.js   # hand-calculated cases, Little within 5%, M/M/1, CONWIP cap
+node simulations/push-pull/engine.test.js     # card cap, identical demand stream, 100% fill with CV 0, bias, mix shift
 ```
+
+## Push vs. Pull in class
+
+Open the simulation, switch to **Game**, open **Facilitator** and share the seed: everyone who enters the same seed plays the same hidden demand events. Tick **Hide KPIs until the end** so candidates decide without live results. Costs are illustrative (holding 1, backorder 5), not Amcor figures.
 
 ## How to add a new simulation
 

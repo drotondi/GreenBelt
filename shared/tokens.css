@@ -61,6 +61,14 @@
   --color-primary-hover: var(--navy-600);
   --color-on-primary: var(--neutral-0);
 
+  /* Status colors — reserved meanings, never decorative.
+     Orange and green fail AA as small text on white: use them for outlines,
+     markers and icons, with the label text in navy. Magenta passes (5.7:1). */
+  --color-bottleneck: #E98300;
+  --color-success: #00A551;
+  --color-danger: #C90062;
+  --color-danger-tint: #fbe6ef;
+
   /* Simulation palette */
   --sim-peg: var(--navy-200);
   --sim-ball: var(--amcor-cyan);

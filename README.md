@@ -1,6 +1,11 @@
 # Lean Six Sigma simulations
 
-A hub of small, interactive simulations that make core Lean Six Sigma concepts visible, styled with the Amcor visual identity. The first simulation is the **Galton Board** (variation and the normal distribution).
+A hub of small, interactive simulations that make core Lean Six Sigma concepts visible, styled with the Amcor visual identity.
+
+| Simulation | Concept |
+|---|---|
+| **Galton Board** | Variation and the normal distribution |
+| **Little's Law: 3-process line** | WIP = Throughput × Lead time, bottlenecks, variability, push vs. pull (CONWIP) |
 
 **Live site:** https://drotondi.github.io/GreenBelt/
 
@@ -26,7 +31,7 @@ Run it from the repository root, then open http://localhost:8000/.
 
 ### Why classic scripts
 
-Browsers block ES modules on `file://`, so all JavaScript uses classic `<script defer>` tags and a single global namespace, `window.LSS` (`LSS.config`, `LSS.i18n`, `LSS.icons`, `LSS.header`, `LSS.registry`). Script order in each page matters. Links always point to an explicit `index.html`, because folder links do not open `index.html` from disk.
+Browsers block ES modules on `file://`, so all JavaScript uses classic `<script defer>` tags and a single global namespace, `window.LSS` (`LSS.config`, `LSS.i18n`, `LSS.icons`, `LSS.motion`, `LSS.header`, `LSS.registry`). Script order in each page matters. Links always point to an explicit `index.html`, because folder links do not open `index.html` from disk.
 
 ## Brand assets flag
 
@@ -48,10 +53,19 @@ index.html                 Home: renders cards from simulations/registry.js
 shared/                    Design tokens, base styles, i18n, header, icons, config
 simulations/registry.js    List of simulations shown on Home
 simulations/galton-board/  Galton Board simulation
+simulations/littles-law/   Little's Law simulation (engine.js = pure discrete-event model)
 simulations/_template/     Copyable skeleton (status "draft", hidden from Home)
 ```
 
-All colors, radii, shadows and motion values live in `shared/tokens.css`.
+All colors, radii, shadows and motion values live in `shared/tokens.css`. Status colors have reserved meanings: orange = bottleneck, green = verified, magenta = unstable.
+
+## Tests
+
+The Little's Law engine has dependency-free unit tests (deterministic hand-calculated cases, Little's Law within 5% on random runs, M/M/1 tandem check, unstable detection, CONWIP cap):
+
+```sh
+node simulations/littles-law/engine.test.js
+```
 
 ## How to add a new simulation
 

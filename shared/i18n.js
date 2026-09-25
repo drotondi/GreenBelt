@@ -37,6 +37,9 @@
       'tags.variation': 'Variation',
       'tags.normal-distribution': 'Normal distribution',
       'tags.central-limit-theorem': 'Central limit theorem',
+      'tags.flow': 'Flow',
+      'tags.wip': 'WIP',
+      'tags.lead-time': 'Lead time',
     },
     es: {
       'hub.title': 'Simulaciones de Lean Six Sigma',
@@ -56,6 +59,9 @@
       'tags.variation': 'Variación',
       'tags.normal-distribution': 'Distribución normal',
       'tags.central-limit-theorem': 'Teorema del límite central',
+      'tags.flow': 'Flujo',
+      'tags.wip': 'WIP',
+      'tags.lead-time': 'Lead time',
     },
     pt: {
       'hub.title': 'Simulações de Lean Six Sigma',
@@ -75,6 +81,9 @@
       'tags.variation': 'Variação',
       'tags.normal-distribution': 'Distribuição normal',
       'tags.central-limit-theorem': 'Teorema central do limite',
+      'tags.flow': 'Fluxo',
+      'tags.wip': 'WIP',
+      'tags.lead-time': 'Lead time',
     },
   };
 

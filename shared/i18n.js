@@ -40,6 +40,10 @@
       'tags.flow': 'Flow',
       'tags.wip': 'WIP',
       'tags.lead-time': 'Lead time',
+      'tags.pull': 'Pull',
+      'tags.kanban': 'Kanban',
+      'tags.planning': 'Planning',
+      'tags.inventory': 'Inventory',
     },
     es: {
       'hub.title': 'Simulaciones de Lean Six Sigma',
@@ -62,6 +66,10 @@
       'tags.flow': 'Flujo',
       'tags.wip': 'WIP',
       'tags.lead-time': 'Lead time',
+      'tags.pull': 'Pull',
+      'tags.kanban': 'Kanban',
+      'tags.planning': 'Planificación',
+      'tags.inventory': 'Inventario',
     },
     pt: {
       'hub.title': 'Simulações de Lean Six Sigma',
@@ -84,6 +92,10 @@
       'tags.flow': 'Fluxo',
       'tags.wip': 'WIP',
       'tags.lead-time': 'Lead time',
+      'tags.pull': 'Pull',
+      'tags.kanban': 'Kanban',
+      'tags.planning': 'Planejamento',
+      'tags.inventory': 'Estoque',
     },
   };
 

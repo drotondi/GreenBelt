@@ -47,6 +47,23 @@
       },
     },
     {
+      id: 'push-pull',
+      path: 'simulations/push-pull/index.html',
+      thumbnail: 'simulations/push-pull/thumbnail.svg',
+      status: 'live',
+      tags: ['pull', 'kanban', 'planning', 'inventory'],
+      title: {
+        en: 'Push vs. Pull: planning game',
+        es: 'Push vs. Pull: juego de planificación',
+        pt: 'Push vs. Pull: jogo de planejamento',
+      },
+      description: {
+        en: 'Plan a forecast-driven line against a kanban line and feel why pull serves customers with far less inventory.',
+        es: 'Planifica una línea guiada por pronóstico contra una línea kanban y siente por qué pull atiende a los clientes con mucho menos inventario.',
+        pt: 'Planeje uma linha guiada por previsão contra uma linha kanban e sinta por que o pull atende os clientes com muito menos estoque.',
+      },
+    },
+    {
       id: 'template',
       path: 'simulations/_template/index.html',
       thumbnail: 'simulations/_template/thumbnail.svg',

@@ -31,62 +31,9 @@
   const ROLLING_WINDOW = 30;    // minutes for rolling throughput
   const RECENT_DONE = 24;       // completed units kept for display
 
-  /* ---------- Random numbers ---------- */
-  function mulberry32(seed) {
-    let a = seed >>> 0;
-    return function () {
-      a = (a + 0x6D2B79F5) >>> 0;
-      let t = a;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-
-  function makeSampler(rng) {
-    let spare = null;
-    const uniform = () => {
-      let u = rng();
-      while (u <= 1e-12) u = rng();
-      return u;
-    };
-    const normal = () => {
-      if (spare !== null) {
-        const s = spare;
-        spare = null;
-        return s;
-      }
-      const u = uniform();
-      const v = rng();
-      const r = Math.sqrt(-2 * Math.log(u));
-      spare = r * Math.sin(2 * Math.PI * v);
-      return r * Math.cos(2 * Math.PI * v);
-    };
-    // Marsaglia–Tsang gamma(k, 1)
-    const gamma = (k) => {
-      if (k < 1) return gamma(k + 1) * Math.pow(uniform(), 1 / k);
-      const d = k - 1 / 3;
-      const c = 1 / Math.sqrt(9 * d);
-      for (;;) {
-        let x;
-        let v;
-        do {
-          x = normal();
-          v = 1 + c * x;
-        } while (v <= 0);
-        v = v * v * v;
-        const u = uniform();
-        if (u < 1 - 0.0331 * x * x * x * x) return d * v;
-        if (Math.log(u) < 0.5 * x * x + d * (1 - v + Math.log(v))) return d * v;
-      }
-    };
-    /** Positive random time with the given mean and coefficient of variation. */
-    return function sample(mean, cv) {
-      if (!(cv > 0)) return mean;
-      const k = 1 / (cv * cv);
-      return (gamma(k) * mean) / k;
-    };
-  }
+  /* ---------- Random numbers (shared/sim/random.js) ---------- */
+  const { mulberry32, makeSampler, percentile } =
+    typeof module !== 'undefined' && module.exports ? require('../../shared/sim/random.js') : root.LSS.sim;
 
   /* ---------- Engine ---------- */
   const DEFAULTS = {
@@ -98,13 +45,6 @@
     warmup: 20,
     seed: 20240601,
   };
-
-  function percentile(values, q) {
-    if (!values.length) return NaN;
-    const s = values.slice().sort((a, b) => a - b);
-    const i = Math.min(s.length - 1, Math.max(0, Math.ceil(q * s.length) - 1));
-    return s[i];
-  }
 
   class LittleEngine {
     constructor(params = {}) {

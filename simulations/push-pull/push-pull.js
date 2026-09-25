@@ -183,8 +183,10 @@
   }
 
   function setPreset(i) {
+    presetIdx = i;
     ui.presetBtns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
-    ui.presetText.textContent = t(`pp.${PRESETS[presetIdx].key}.obs`);
+    // Off-preset (a control changed or an event fired): the scenario guidance no longer applies.
+    ui.presetText.textContent = i >= 0 ? t(`pp.${PRESETS[i].key}.obs`) : t('pp.presets.custom');
   }
 
   function applyParam(key, value) {

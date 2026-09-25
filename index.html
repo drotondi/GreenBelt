@@ -19,47 +19,55 @@
 
   <footer id="site-footer"></footer>
 
-  <script type="module">
-    import { initI18n, onLangChange, localize, t, has, updateLinks } from './shared/i18n.js';
-    import { renderHeader, renderFooter } from './shared/header.js';
-    import { icon } from './shared/icons.js';
-    import { liveSimulations } from './simulations/registry.js';
+  <!-- Classic scripts (not modules) so the site also works opened from disk. Order matters. -->
+  <script defer src="shared/config.js"></script>
+  <script defer src="shared/i18n.js"></script>
+  <script defer src="shared/icons.js"></script>
+  <script defer src="shared/header.js"></script>
+  <script defer src="simulations/registry.js"></script>
+  <script>
+    // Runs after the deferred scripts above.
+    document.addEventListener('DOMContentLoaded', () => {
+      const { initI18n, onLangChange, localize, t, has, updateLinks } = LSS.i18n;
+      const { renderHeader, renderFooter } = LSS.header;
+      const { icon } = LSS.icons;
+      const { liveSimulations } = LSS.registry;
+      const grid = document.getElementById('sim-grid');
 
-    const grid = document.getElementById('sim-grid');
+      const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const tagLabel = (id) => {
+        const key = `tags.${id}`;
+        if (has(key)) return t(key);
+        const words = id.replace(/[-_]+/g, ' ');
+        return words.charAt(0).toUpperCase() + words.slice(1);
+      };
 
-    const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const tagLabel = (id) => {
-      const key = `tags.${id}`;
-      if (has(key)) return t(key);
-      const words = id.replace(/[-_]+/g, ' ');
-      return words.charAt(0).toUpperCase() + words.slice(1);
-    };
-
-    function renderCards() {
-      const sims = liveSimulations();
-      if (!sims.length) {
-        grid.innerHTML = `<li><p>${esc(t('home.empty'))}</p></li>`;
-        return;
+      function renderCards() {
+        const sims = liveSimulations();
+        if (!sims.length) {
+          grid.innerHTML = `<li><p>${esc(t('home.empty'))}</p></li>`;
+          return;
+        }
+        grid.innerHTML = sims.map((s) => `
+          <li>
+            <a class="card sim-card" href="${esc(s.path)}" data-keep-lang data-sim="${esc(s.id)}">
+              <div class="sim-card__media"><img src="${esc(s.thumbnail)}" alt="" width="320" height="180"></div>
+              <div class="sim-card__body">
+                <h3 class="sim-card__title">${esc(localize(s.title))}</h3>
+                <p class="sim-card__desc">${esc(localize(s.description))}</p>
+                ${s.tags.length ? `<ul class="chips">${s.tags.map((tag) => `<li class="chip">${esc(tagLabel(tag))}</li>`).join('')}</ul>` : ''}
+                <span class="sim-card__action">${esc(t('home.open'))}${icon('arrowRight', { size: 16 })}</span>
+              </div>
+            </a>
+          </li>`).join('');
+        updateLinks(grid);
       }
-      grid.innerHTML = sims.map((s) => `
-        <li>
-          <a class="card sim-card" href="${esc(s.path)}" data-keep-lang data-sim="${esc(s.id)}">
-            <div class="sim-card__media"><img src="${esc(s.thumbnail)}" alt="" width="320" height="180"></div>
-            <div class="sim-card__body">
-              <h3 class="sim-card__title">${esc(localize(s.title))}</h3>
-              <p class="sim-card__desc">${esc(localize(s.description))}</p>
-              ${s.tags.length ? `<ul class="chips">${s.tags.map((tag) => `<li class="chip">${esc(tagLabel(tag))}</li>`).join('')}</ul>` : ''}
-              <span class="sim-card__action">${esc(t('home.open'))}${icon('arrowRight', { size: 16 })}</span>
-            </div>
-          </a>
-        </li>`).join('');
-      updateLinks(grid);
-    }
 
-    renderHeader({ variant: 'home' });
-    renderFooter();
-    onLangChange(renderCards);
-    initI18n();
+      renderHeader({ variant: 'home' });
+      renderFooter();
+      onLangChange(renderCards);
+      initI18n();
+    });
   </script>
 </body>
 </html>

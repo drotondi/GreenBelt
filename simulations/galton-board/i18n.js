@@ -1,5 +1,5 @@
 /** Galton Board strings. Keys are namespaced with "galton." */
-export default {
+LSS.i18n.registerStrings({
   en: {
     'galton.pageTitle': 'Galton Board · Lean Six Sigma simulations',
     'galton.eyebrow': 'Variation',
@@ -114,4 +114,4 @@ export default {
     'galton.about.p1': 'O tabuleiro de Galton, criado por Sir Francis Galton, é um painel vertical em que bolinhas caem por fileiras de pinos e se acumulam em compartimentos na base. Em cada fileira a bolinha bate em um pino e desvia ao acaso para a esquerda ou para a direita, então o compartimento final é a soma de vários eventos binários independentes.',
     'galton.about.p2': 'Conforme mais bolinhas caem, os compartimentos desenham um sino: a distribuição binomial se aproxima da normal, uma demonstração direta do Teorema Central do Limite. A saída de um processo varia pelo mesmo motivo: muitas causas pequenas e independentes se somam e geram uma distribuição em forma de sino, o que no Six Sigma chamamos de variação por causas comuns.',
   },
-};
+});

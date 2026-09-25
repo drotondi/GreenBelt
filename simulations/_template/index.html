@@ -3,7 +3,8 @@
   Simulation template. To start a new simulation:
   1. Copy this folder to simulations/<your-id>/
   2. Rename the "tpl." string prefix in i18n.js and here to your own prefix.
-  3. Implement sim.js; add one entry to simulations/registry.js with status "live".
+  3. Implement sim.js; add one entry to simulations/registry.js with status "live"
+     and path "simulations/<your-id>/index.html".
 -->
 <html lang="en">
 <head>
@@ -14,7 +15,13 @@
   <link rel="stylesheet" href="../../shared/tokens.css">
   <link rel="stylesheet" href="../../shared/base.css">
   <link rel="stylesheet" href="sim.css">
-  <script type="module" src="sim.js"></script>
+  <!-- Classic scripts (not modules) so the page also works opened from disk. Order matters. -->
+  <script defer src="../../shared/config.js"></script>
+  <script defer src="../../shared/i18n.js"></script>
+  <script defer src="../../shared/icons.js"></script>
+  <script defer src="../../shared/header.js"></script>
+  <script defer src="i18n.js"></script>
+  <script defer src="sim.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main" data-i18n="a11y.skip"></a>

@@ -571,7 +571,7 @@
     while (nextAvgSample <= engine.t) {
       const m = engine.metrics({ percentiles: false });
       avgHist.wip.push([nextAvgSample, m.warm ? m.wipAvg : NaN]);
-      avgHist.lt.push([nextAvgSample, m.completedInWindow ? m.leadTime : NaN]);
+      avgHist.lt.push([nextAvgSample, m.leadTimeCount ? m.leadTime : NaN]);
       nextAvgSample += AVG_SAMPLE;
     }
     const cut = engine.t - HISTORY_MINUTES;
@@ -608,7 +608,7 @@
   function chipState(m) {
     if (!m.stable) return 'unstable';
     if (!m.warm) return 'stabilizing';
-    if (m.completedInWindow < 10 || !Number.isFinite(m.littleDiff)) return 'waiting';
+    if (m.leadTimeCount < 10 || !Number.isFinite(m.littleDiff)) return 'waiting';
     return m.littleDiff <= 0.05 ? 'ok' : 'converging';
   }
 

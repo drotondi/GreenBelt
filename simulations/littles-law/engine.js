@@ -16,8 +16,11 @@
  *
  * Measurement: every average (WIP, throughput, lead time, utilization, queues) is
  * measured, never formula-derived, over the window [measureStart + warmup, now].
- * setParams() keeps the units in the line but restarts that window, so averages
- * never mix two parameter regimes.
+ * setParams() keeps the units in the line but restarts that window. Lead time only
+ * counts units that entered the line after the window opened, so units carried over
+ * from a previous regime (e.g. a queue left by an overload) never inflate it; they
+ * still count in WIP and throughput while they drain, which the verification chip
+ * reports as "converging" until the line settles.
  */
 (function (root) {
   'use strict';
@@ -212,10 +215,8 @@
       this.recent.push(unit);
       if (this.recent.length > RECENT_DONE) this.recent.shift();
       this.exitTimes.push(this.t);
-      if (this.t >= this.warmupEnd) {
-        this.completedInWindow++;
-        this.leadTimes.push(unit.leadTime);
-      }
+      if (this.t >= this.warmupEnd) this.completedInWindow++;          // throughput: every exit in the window
+      if (unit.enter >= this.warmupEnd) this.leadTimes.push(unit.leadTime); // lead time: current-regime units only
       this.history.lt.push([this.t, unit.leadTime]);
       this.releaseFromBacklog();
     }
@@ -292,10 +293,11 @@
       const span = this.t - this.warmupEnd;
       const warm = span > 0;
       const n = this.completedInWindow;
+      const nLT = this.leadTimes.length;
       const sumLT = this.leadTimes.reduce((a, b) => a + b, 0);
       const wipAvg = warm ? this.wipArea / span : NaN;
       const th = warm ? n / span : NaN;
-      const lt = n ? sumLT / n : NaN;
+      const lt = nLT ? sumLT / nLT : NaN;
       const product = th * lt;
       const sinceStart = this.t - this.measureStart;
       const rollingSpan = Math.min(ROLLING_WINDOW, this.t);
@@ -330,6 +332,7 @@
         leadTime: lt,
         leadTimeP90: percentiles ? percentile(this.leadTimes, 0.9) : NaN,
         completedInWindow: n,
+        leadTimeCount: nLT,
         completedTotal: this.completedTotal,
         littleProduct: product,
         littleDiff: wipAvg > 0 && Number.isFinite(product) ? Math.abs(wipAvg - product) / wipAvg : NaN,

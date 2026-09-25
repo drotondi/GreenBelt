@@ -101,7 +101,29 @@ for (const [cv, seed] of [[0.3, 1], [0.6, 2], [1.0, 3], [1.0, 4]]) {
   check('Pull: reported stable (line WIP bounded)', m.stable === true);
 }
 
-/* 8. Changing parameters restarts measurement (new warm-up). */
+/* 8. Regime change: units carried over from the previous regime do not enter the
+ *    new lead-time average (overload builds a queue, then arrivals drop). */
+{
+  const e = new LittleEngine({ lambda: 2, mu: [2.5, 1.7, 2.5], cv: 0.3, seed: 21 });
+  const done = [];
+  const complete = e.complete.bind(e);
+  e.complete = (u) => { done.push(u); complete(u); };
+  e.advance(200);
+  const carried = e.wip;
+  e.setParams({ lambda: 1.0 });
+  const w = e.warmupEnd;
+  e.advance(60);
+  const m = e.metrics();
+  const inWindow = done.filter((u) => u.exit >= w);
+  const current = inWindow.filter((u) => u.enter >= w);
+  const mean = (a) => a.reduce((s, u) => s + u.leadTime, 0) / a.length;
+  check('Regime change: lead time uses only units that entered after the window opened',
+    current.length > 0 && m.leadTimeCount === current.length && near(m.leadTime, mean(current), 1e-9),
+    `${current.length} current-regime units, LT ${f(m.leadTime, 2)} (mixing all ${inWindow.length} exits would give ${f(mean(inWindow), 2)}; ${carried} units carried over)`);
+  check('Regime change: throughput still counts every exit in the window', m.completedInWindow === inWindow.length);
+}
+
+/* 9. Changing parameters restarts measurement (new warm-up). */
 {
   const e = new LittleEngine({ lambda: 1.5, mu: [2, 2, 2], cv: 0.3 });
   e.advance(100);

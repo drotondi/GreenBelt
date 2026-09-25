@@ -1,5 +1,5 @@
 /** Template strings. Replace the "tpl." prefix with your simulation's own prefix. */
-export default {
+LSS.i18n.registerStrings({
   en: {
     'tpl.pageTitle': 'Simulation template · Lean Six Sigma simulations',
     'tpl.eyebrow': 'Template',
@@ -54,4 +54,4 @@ export default {
     'tpl.about.title': 'Sobre esta simulação',
     'tpl.about.p1': 'Explique o conceito em três ou quatro frases e conecte-o à melhoria de processos.',
   },
-};
+});

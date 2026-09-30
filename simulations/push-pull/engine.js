@@ -410,7 +410,12 @@
     }
 
     advance(dt) {
-      const target = this.t + dt;
+      this.advanceTo(this.t + dt);
+    }
+
+    /** Advance to an exact clock time (avoids float drift at round boundaries). */
+    advanceTo(target) {
+      if (!(target > this.t)) return;
       const lines = [this.lines.push, this.lines.pull];
       for (;;) {
         // earliest event across demand, planning, event end and both lines

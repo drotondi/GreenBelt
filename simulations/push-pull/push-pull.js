@@ -707,9 +707,10 @@
     if (needsLayout) { layout(); needsLayout = false; }
     if (playing && sim) {
       let step = dt * SPEEDS[speedIndex];
-      if (sim.t + step >= runTarget) step = Math.max(0, runTarget - sim.t);
-      sim.advance(step);
-      if (sim.t >= runTarget - 1e-9) {
+      // Land exactly on the round end, so period closes and decisions line up.
+      if (sim.t + step >= runTarget - 1e-9) sim.advanceTo(runTarget);
+      else sim.advance(step);
+      if (sim.t >= runTarget) {
         const done = runDone;
         runTarget = Infinity;
         runDone = null;

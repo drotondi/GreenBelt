@@ -146,5 +146,16 @@ for (const seed of SEEDS.slice(0, 3)) {
   check('Game mode: push releases only what the player decides', r0 === '0,0' && s.lines.push.released.join() === '3,2');
 }
 
+/* 11. advanceTo lands exactly on the target despite fractional frame steps. */
+{
+  const a = new PushPullSim({ seed: 4 });
+  const b = new PushPullSim({ seed: 4 });
+  for (let i = 0; i < 1799; i++) a.advance(1 / 60);
+  a.advanceTo(30);
+  b.advance(30);
+  const round = (m) => JSON.stringify(m, (k, v) => (typeof v === 'number' ? +v.toFixed(9) : v));
+  check('advanceTo: clock ends exactly on the round boundary', a.t === 30 && round(a.metrics()) === round(b.metrics()), `t = ${a.t}`);
+}
+
 console.log(failed ? `\n${failed} test(s) failed` : '\nAll engine tests passed');
 if (typeof process !== 'undefined') process.exitCode = failed ? 1 : 0;

@@ -273,6 +273,10 @@
         leadTimeP90: percentiles ? percentile(this.leadTimes, 0.9) : NaN,
         completedInWindow: n,
         leadTimeCount: nLT,
+        // Raw inputs, so the UI can show how each average is calculated
+        elapsed: warm ? span : 0,
+        wipArea: this.wipArea,
+        leadTimeSum: sumLT,
         completedTotal: this.completedTotal,
         littleProduct: product,
         littleDiff: wipAvg > 0 && Number.isFinite(product) ? Math.abs(wipAvg - product) / wipAvg : NaN,

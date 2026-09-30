@@ -5,7 +5,7 @@ A hub of small, interactive simulations that make core Lean Six Sigma concepts v
 | Simulation | Concept |
 |---|---|
 | **Galton Board** | Variation and the normal distribution |
-| **Little's Law: 3-process line** | WIP = Throughput × Lead time, bottlenecks, variability, push vs. pull (CONWIP) |
+| **Little's Law: 3-process line** | WIP = Throughput × Lead time, how each term is measured, bottlenecks and overload |
 | **Push vs. Pull: planning game** | Forecast-driven (MRP) vs. kanban release, card sizing; Explore mode and a 6-round classroom game with facilitator seed |
 
 **Live site:** https://drotondi.github.io/GreenBelt/
@@ -67,7 +67,7 @@ All colors, radii, shadows and motion values live in `shared/tokens.css`. Status
 Simulation engines have dependency-free unit tests:
 
 ```sh
-node simulations/littles-law/engine.test.js   # hand-calculated cases, Little within 5%, M/M/1, CONWIP cap
+node simulations/littles-law/engine.test.js   # hand-calculated cases, Little within 5%, M/M/1, CONWIP cap (engine)
 node simulations/push-pull/engine.test.js     # card cap, identical demand stream, 100% fill with CV 0, bias, mix shift
 ```
 

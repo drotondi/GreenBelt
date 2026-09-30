@@ -58,7 +58,15 @@
         <p class="status-chip" id="eq-chip" data-state="stabilizing"><span class="status-chip__icon" id="eq-chip-icon"></span><span id="eq-chip-text"></span></p>
         <p class="eq__product" id="eq-product"></p>
       </div>
-      <p class="eq__note" data-i18n="ll.warmupNote"></p>
+      <div class="calc">
+        <h2 class="calc__title" data-i18n="ll.calc.title"></h2>
+        <dl class="calc__list">
+          <div><dt data-i18n="ll.eq.wip"></dt><dd><span data-i18n="ll.calc.wipRule"></span><span class="calc__live" id="calc-wip"></span></dd></div>
+          <div><dt data-i18n="ll.eq.th"></dt><dd><span data-i18n="ll.calc.thRule"></span><span class="calc__live" id="calc-th"></span></dd></div>
+          <div><dt data-i18n="ll.eq.lt"></dt><dd><span data-i18n="ll.calc.ltRule"></span><span class="calc__live" id="calc-lt"></span></dd></div>
+        </dl>
+        <p class="eq__note" data-i18n="ll.calc.note"></p>
+      </div>
       <p class="sr-only" id="live-region" aria-live="polite" aria-atomic="true"></p>
     </section>
 
@@ -79,7 +87,6 @@
               <input type="range" id="in-lambda" min="0.2" max="5" step="0.1" value="1.5">
               <p class="node__hint" id="lambda-interval"></p>
             </div>
-            <p class="node__backlog" id="backlog-text" hidden></p>
           </div>
         </div>
 
@@ -127,28 +134,6 @@
           </div>
           <input type="range" id="in-speed" min="0" max="5" step="1" value="2">
         </div>
-        <div class="field">
-          <div class="field__head">
-            <label class="field__label" for="in-cv" data-i18n="ll.cv"></label>
-            <output class="field__value" for="in-cv" id="out-cv"></output>
-          </div>
-          <input type="range" id="in-cv" min="0" max="1" step="0.05" value="0.2">
-          <p class="node__hint" data-i18n="ll.cvHint"></p>
-        </div>
-        <div class="field">
-          <p class="field__label" id="policy-label" data-i18n="ll.policy"></p>
-          <div class="segmented" role="group" aria-labelledby="policy-label">
-            <button type="button" class="segmented__btn" data-policy="push" data-i18n="ll.push"></button>
-            <button type="button" class="segmented__btn" data-policy="pull" data-i18n="ll.pull"></button>
-          </div>
-        </div>
-        <div class="field">
-          <div class="field__head">
-            <label class="field__label" for="in-cap" data-i18n="ll.wipCap"></label>
-            <output class="field__value" for="in-cap" id="out-cap"></output>
-          </div>
-          <input type="range" id="in-cap" min="1" max="50" step="1" value="8">
-        </div>
       </div>
       <p class="hint" id="shortcuts"></p>
     </section>
@@ -163,7 +148,6 @@
         <ul class="legend">
           <li><span class="legend__swatch legend__swatch--series" aria-hidden="true"></span><span data-i18n="ll.charts.current"></span></li>
           <li><span class="legend__swatch legend__swatch--avg" aria-hidden="true"></span><span data-i18n="ll.charts.avg"></span></li>
-          <li><span class="legend__swatch legend__swatch--warmup" aria-hidden="true"></span><span data-i18n="ll.charts.warmup"></span></li>
         </ul>
       </div>
       <div class="chart">

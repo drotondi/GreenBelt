@@ -28,13 +28,12 @@
   const AVG_SAMPLE = 0.5;   // simulated minutes between running-average samples
   const BOTTLENECK_MARGIN = 0.03; // utilization lead needed to name a bottleneck
   const BOTTLENECK_KEEP = 0.01;   // hysteresis: keep the current one within this gap
+  const CV = 0.3;                 // fixed, small variability of arrivals and process times
 
   const SCENARIOS = [
-    { key: 's1', params: { lambda: 1.5, mu: [2, 2, 2], cv: 0.2, policy: 'push', wipCap: 8 } },
-    { key: 's2', params: { lambda: 1.5, mu: [2.5, 1.7, 2.5], cv: 0.5, policy: 'push', wipCap: 8 } },
-    { key: 's3', params: { lambda: 2.0, mu: [2.5, 1.7, 2.5], cv: 0.3, policy: 'push', wipCap: 8 } },
-    { key: 's4', params: { lambda: 1.5, mu: [2, 2, 2], cv: 1.0, policy: 'push', wipCap: 8 } },
-    { key: 's5', params: { lambda: 2.0, mu: [2.5, 1.7, 2.5], cv: 0.3, policy: 'pull', wipCap: 8 } },
+    { key: 's1', params: { lambda: 1.5, mu: [2, 2, 2] } },
+    { key: 's2', params: { lambda: 1.5, mu: [2.5, 1.7, 2.5] } },
+    { key: 's3', params: { lambda: 2.0, mu: [2.5, 1.7, 2.5] } },
   ];
 
   /* ---------- DOM ---------- */
@@ -73,11 +72,11 @@
     mu: [0, 1, 2].map((i) => $(`in-mu${i}`)), outMu: [0, 1, 2].map((i) => $(`out-mu${i}`)), cycle: [0, 1, 2].map((i) => $(`cycle-${i}`)),
     util: [0, 1, 2].map((i) => $(`util-${i}`)), utilBar: [0, 1, 2].map((i) => $(`utilbar-${i}`)),
     q: [0, 1, 2].map((i) => $(`q-${i}`)), qa: [0, 1, 2].map((i) => $(`qa-${i}`)),
-    speed: $('in-speed'), outSpeed: $('out-speed'), cv: $('in-cv'), outCv: $('out-cv'),
-    cap: $('in-cap'), outCap: $('out-cap'), policyBtns: [...document.querySelectorAll('.segmented__btn')],
+    speed: $('in-speed'), outSpeed: $('out-speed'),
+    calcWip: $('calc-wip'), calcTh: $('calc-th'), calcLt: $('calc-lt'),
     eqWip: $('eq-wip'), eqTh: $('eq-th'), eqLt: $('eq-lt'), eqWipSub: $('eq-wip-sub'), eqThSub: $('eq-th-sub'), eqLtSub: $('eq-lt-sub'),
     chip: $('eq-chip'), chipIcon: $('eq-chip-icon'), chipText: $('eq-chip-text'), product: $('eq-product'),
-    live: $('live-region'), backlog: $('backlog-text'), done: $('done-count'),
+    live: $('live-region'), done: $('done-count'),
     seedLabel: $('seed-label'), clock: $('clock-label'), shortcuts: $('shortcuts'),
     scenList: $('scen-list'), scenText: $('scen-observe-text'),
     chartWip: $('chart-wip'), chartLt: $('chart-lt'),
@@ -119,7 +118,6 @@
   let playing = false;
   let speedIndex = Number(ui.speed.value);
   let scenarioIdx = 0;
-  let bands = [];           // warm-up intervals [start, end] for the charts
   let avgHist = { wip: [], lt: [] };
   let nextAvgSample = 0;
   let bottleneck = -1;
@@ -127,10 +125,11 @@
   let selectedDone = null;  // id of the sink unit shown in the tooltip
 
   function clone(p) { return Object.assign({}, p, { mu: p.mu.slice() }); }
+  // Fixed model settings: no warm-up, small fixed variability, push release (no WIP cap).
+  const FIXED = { cv: CV, warmup: 0, policy: 'push' };
 
   function newEngine() {
-    engine = new LittleEngine(Object.assign(clone(params), { seed }));
-    bands = [[engine.measureStart, engine.warmupEnd]];
+    engine = new LittleEngine(Object.assign(clone(params), FIXED, { seed }));
     avgHist = { wip: [], lt: [] };
     nextAvgSample = 0;
     bottleneck = -1;
@@ -144,9 +143,6 @@
     Object.assign(params, partial);
     if (partial.mu) params.mu = partial.mu.slice();
     engine.setParams(partial);
-    const last = bands[bands.length - 1];
-    if (last && engine.measureStart <= last[1]) last[1] = engine.warmupEnd;
-    else bands.push([engine.measureStart, engine.warmupEnd]);
     avgHist.wip.push([engine.t, NaN]);
     avgHist.lt.push([engine.t, NaN]);
     setScenario(-1);
@@ -164,9 +160,10 @@
   }
 
   function setScenario(i) {
-    if (i >= 0) scenarioIdx = i;
+    scenarioIdx = i;
     scenBtns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
-    ui.scenText.textContent = t(`ll.${SCENARIOS[scenarioIdx].key}.obs`);
+    // After a manual change the scenario guidance no longer applies.
+    ui.scenText.textContent = i >= 0 ? t(`ll.${SCENARIOS[i].key}.obs`) : t('ll.scen.custom');
   }
 
   /* ---------- Layout (canvas geometry measured from the DOM) ---------- */
@@ -190,14 +187,10 @@
     const step = UNIT + GAP;
     const anchor = (name) => rectOf(flow.querySelector(`[data-anchor="${name}"]`), base);
 
-    // Source: box plus backlog grid below it
+    // Source box
     const sv = anchor('source');
     const sb = Math.min(40, sv.w * 0.5);
     const source = { x: sv.x + (sv.w - sb) / 2, y: sv.y + 4, s: sb };
-    const blTop = source.y + sb + 10;
-    const blCols = Math.max(1, Math.floor((sv.w - 8) / step));
-    const blRows = Math.max(0, Math.floor((sv.y + sv.h - blTop) / step));
-    const backlog = { x: sv.x + (sv.w - blCols * step) / 2, y: blTop, cols: blCols, rows: blRows };
 
     const stations = [0, 1, 2].map((i) => {
       const v = anchor(`p${i}`);
@@ -225,7 +218,7 @@
       v: kv,
     };
 
-    L = { W, H, vertical, source, backlog, stations, sink, step };
+    L = { W, H, vertical, source, stations, sink, step };
   }
 
   function queueSlot(i, j) {
@@ -246,7 +239,6 @@
     return [st.x + (st.s - UNIT) / 2, st.y + (st.s - UNIT) / 2];
   };
   const sinkSlot = (k) => [L.sink.x + (k % SINK_COLS) * L.step, L.sink.y + Math.floor(k / SINK_COLS) * L.step];
-  const backlogSlot = (j) => [L.backlog.x + (j % L.backlog.cols) * L.step, L.backlog.y + Math.floor(j / L.backlog.cols) * L.step];
   const sourceSlot = () => [L.source.x + (L.source.s - UNIT) / 2, L.source.y + (L.source.s - UNIT) / 2];
 
   /* ---------- Unit tweening ---------- */
@@ -382,21 +374,6 @@
       }
     }
 
-    // Backlog (pull): outlined units, outside the line
-    const blCap = L.backlog.cols * L.backlog.rows;
-    if (e.backlog.length && blCap) {
-      ctx.strokeStyle = C.unitStrong;
-      ctx.lineWidth = 1.5;
-      const n = Math.min(e.backlog.length, blCap);
-      for (let j = 0; j < n; j++) {
-        // Stable slot per unit: backlog ids are consecutive, so id % capacity never collides.
-        const [x, y] = backlogSlot(e.backlog[j].id % blCap);
-        const sp = place(e.backlog[j].id, x, y, now, true);
-        rrect(ctx, sp.x + 0.75, sp.y + 0.75, UNIT - 1.5, UNIT - 1.5, 2);
-        ctx.stroke();
-      }
-    }
-
     // Sink: last completed units in stable slots
     const rec = e.recent;
     const firstIndex = e.completedTotal - rec.length;
@@ -495,14 +472,6 @@
     const X = (tt) => pad.l + ((tt - x0) / (x1 - x0)) * (w - pad.l - pad.r);
     const Y = (v) => h - pad.b - (v / yMax) * (h - pad.t - pad.b);
 
-    // Warm-up bands
-    ctx.fillStyle = C.band;
-    for (const [a, b] of bands) {
-      const aa = Math.max(a, x0);
-      const bb = Math.min(b, engine.t);
-      if (bb > aa) ctx.fillRect(X(aa), pad.t, X(bb) - X(aa), h - pad.t - pad.b);
-    }
-
     // Grid and labels
     ctx.strokeStyle = C.grid;
     ctx.lineWidth = 1;
@@ -589,7 +558,7 @@
 
   /* ---------- UI text & state ---------- */
   function pickBottleneck(m) {
-    if (!m.stable && params.policy === 'push') {
+    if (!m.stable) {
       // Overloaded: the lowest-capacity process is the constraint.
       return params.mu.indexOf(Math.min(...params.mu));
     }
@@ -607,7 +576,6 @@
 
   function chipState(m) {
     if (!m.stable) return 'unstable';
-    if (!m.warm) return 'stabilizing';
     if (m.leadTimeCount < 10 || !Number.isFinite(m.littleDiff)) return 'waiting';
     return m.littleDiff <= 0.05 ? 'ok' : 'converging';
   }
@@ -627,7 +595,6 @@
     const diff = fmtPct(m.littleDiff, 1);
     ui.chipText.textContent =
       state === 'unstable' ? t('ll.chip.unstable')
-        : state === 'stabilizing' ? t('ll.chip.stabilizing', { min: fmtInt(Math.ceil(m.warmupRemaining)) })
           : state === 'waiting' ? t('ll.chip.waiting')
             : state === 'ok' ? t('ll.chip.ok', { diff }) : t('ll.chip.converging', { diff });
     ui.product.textContent = Number.isFinite(m.littleProduct) ? t('ll.chip.product', { value: fmt(m.littleProduct) }) : '';
@@ -645,12 +612,18 @@
       node.querySelector('.bottleneck-badge').hidden = !isB;
     });
 
-    const showBacklog = params.policy === 'pull' || m.backlog > 0;
-    ui.backlog.hidden = !showBacklog;
-    ui.backlog.textContent = t('ll.node.backlog', { n: fmtInt(m.backlog) });
+    renderCalc(m);
     ui.done.textContent = t('ll.node.completed', { n: fmtInt(m.completedTotal) });
     ui.clock.textContent = t('ll.clock', { t: fmtInt(Math.floor(m.t)) });
     ui.seedLabel.textContent = t('ll.seed', { seed: String(seed) });
+  }
+
+  /** Show each average as the calculation behind it, with the live numbers. */
+  function renderCalc(m) {
+    const has = m.elapsed > 0;
+    ui.calcWip.textContent = has ? t('ll.calc.wipLive', { area: fmt(m.wipArea, 1), t: fmt(m.elapsed, 1), v: fmt(m.wipAvg) }) : '';
+    ui.calcTh.textContent = has ? t('ll.calc.thLive', { n: fmtInt(m.completedInWindow), t: fmt(m.elapsed, 1), v: fmt(m.throughput) }) : '';
+    ui.calcLt.textContent = m.leadTimeCount ? t('ll.calc.ltLive', { sum: fmt(m.leadTimeSum, 1), n: fmtInt(m.leadTimeCount), v: fmt(m.leadTime) }) : '';
   }
 
   function renderLive() {
@@ -692,16 +665,7 @@
     ui.speed.value = speedIndex;
     ui.outSpeed.textContent = sp;
     ui.speed.setAttribute('aria-valuetext', sp);
-    ui.cv.value = params.cv;
-    ui.outCv.textContent = fmt(params.cv);
-    ui.cv.setAttribute('aria-valuetext', fmt(params.cv));
-    ui.cap.value = params.wipCap;
-    const pull = params.policy === 'pull';
-    ui.cap.disabled = !pull;
-    ui.outCap.textContent = pull ? fmtInt(params.wipCap) : t('ll.wipCapOff');
-    ui.cap.setAttribute('aria-valuetext', pull ? fmtInt(params.wipCap) : t('ll.wipCapOff'));
-    ui.policyBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.policy === params.policy)));
-    [ui.lambda, ...ui.mu, ui.speed, ui.cv, ui.cap].forEach(setFill);
+    [ui.lambda, ...ui.mu, ui.speed].forEach(setFill);
   }
 
   function renderPlay() {
@@ -715,7 +679,7 @@
     ui.reset.innerHTML = `${icon('rotateCcw', { size: 16 })}<span>${t('ll.reset')}</span>`;
     ui.seed.innerHTML = `${icon('shuffle', { size: 16 })}<span>${t('ll.newSeed')}</span>`;
     ui.shortcuts.innerHTML = t('ll.shortcuts', {
-      space: `<kbd>${t('ll.key.space')}</kbd>`, r: '<kbd>R</kbd>', keys: '<kbd>1</kbd>–<kbd>5</kbd>',
+      space: `<kbd>${t('ll.key.space')}</kbd>`, r: '<kbd>R</kbd>', keys: '<kbd>1</kbd>–<kbd>3</kbd>',
     });
     $('learn-icon').innerHTML = icon('chevronDown', { size: 18 });
     setScenario(scenBtns.findIndex((b) => b.getAttribute('aria-pressed') === 'true'));
@@ -750,10 +714,7 @@
     mu[i] = Number(el.value);
     applyParams({ mu });
   }));
-  ui.cv.addEventListener('input', () => applyParams({ cv: Number(ui.cv.value) }));
-  ui.cap.addEventListener('input', () => applyParams({ wipCap: Number(ui.cap.value) }));
   ui.speed.addEventListener('input', () => { speedIndex = Number(ui.speed.value); syncControls(); });
-  ui.policyBtns.forEach((b) => b.addEventListener('click', () => { if (b.dataset.policy !== params.policy) applyParams({ policy: b.dataset.policy }); }));
   scenBtns.forEach((b, i) => b.addEventListener('click', () => loadScenario(i)));
 
   // After a pointer click, release focus so Space keeps meaning play/pause.
@@ -769,7 +730,7 @@
       setPlaying(!playing);
     } else if (e.key === 'r' || e.key === 'R') {
       reset();
-    } else if (/^[1-5]$/.test(e.key)) {
+    } else if (/^[1-3]$/.test(e.key)) {
       loadScenario(Number(e.key) - 1);
     }
   });

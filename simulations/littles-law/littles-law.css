@@ -246,3 +246,13 @@ input[type="range"]:disabled { cursor: not-allowed; opacity: 0.45; }
 .scen-btn[aria-pressed="true"] .scen-btn__key { background: var(--color-primary); color: var(--color-on-primary); }
 .scen-observe { margin-top: var(--space-4); padding: var(--space-4); border-radius: var(--radius-control); background: var(--color-surface-muted); border: 1px solid var(--color-border); }
 .scen-observe p:last-child { color: var(--color-text-muted); max-width: 80ch; }
+
+/* ---------- How the numbers are calculated ---------- */
+.calc { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+.calc__title { font-size: var(--font-size-sm); margin-bottom: var(--space-2); }
+.calc__list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3) var(--space-5); margin: 0; }
+.calc__list dt { font-size: var(--font-size-sm); font-weight: 700; }
+.calc__list dd { margin: 2px 0 0; font-size: var(--font-size-xs); color: var(--color-text-muted); }
+.calc__live { display: block; margin-top: var(--space-1); font-size: var(--font-size-sm); font-weight: 700; color: var(--color-text); font-variant-numeric: tabular-nums; }
+@media (max-width: 719px) { .calc__list { grid-template-columns: minmax(0, 1fr); } }
+.calc .eq__note { text-align: left; }
